@@ -1,0 +1,23 @@
+<!-- static/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Q&A System</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>PDF Q&A System</h1>
+        <form id="uploadForm">
+            <input type="text" id="userId" placeholder="User ID" required>
+            <input type="file" id="pdfFile" accept=".pdf">
+            <textarea id="question" placeholder="Enter your question" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="answer"></div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
