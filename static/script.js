@@ -1,4 +1,4 @@
-// static/script.js
+// seperate situation of pdf and none pdf
 document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -11,18 +11,31 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     formData.append('question', question);
     if (pdfFile) {
         formData.append('pdf', pdfFile);
+        try {
+            const response = await fetch('/upload/', {
+                method: 'POST',
+                body: formData
+            });
+    
+            const data = await response.json();
+            document.getElementById('answer').innerHTML = `<h2>Answer:</h2><p>${data.answer}</p>`;
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('answer').innerHTML = '<p>An error occurred. Please try again.</p>';
+        }
     }
-
-    try {
-        const response = await fetch('/upload/', {
+    else {
+        try{
+        const response = await fetch('/upload/nonepdf/', {
             method: 'POST',
             body: formData
         });
-
-        const data = await response.json();
-        document.getElementById('answer').innerHTML = `<h2>Answer:</h2><p>${data.answer}</p>`;
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('answer').innerHTML = '<p>An error occurred. Please try again.</p>';
+        
+            const data = await response.json();
+            document.getElementById('answer').innerHTML = `<h2>Answer:</h2><p>${data.answer}</p>`;
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('answer').innerHTML = '<p>An error occurred. Please try again.</p>';
+        }
     }
 });
