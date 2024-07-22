@@ -1,4 +1,7 @@
-// seperate situation of pdf and none pdf
+document.addEventListener('DOMContentLoaded', (event) => {
+    loadConversation();
+});
+
 document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -9,6 +12,7 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     const formData = new FormData();
     formData.append('user_id', userId);
     formData.append('question', question);
+    
     if (pdfFile) {
         formData.append('pdf', pdfFile);
         try {
@@ -18,24 +22,53 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             });
     
             const data = await response.json();
-            document.getElementById('answer').innerHTML = `<h2>Answer:</h2><p>${data.answer}</p>`;
+            const answer = data.answer;
+            addConversation(userId, question, answer);
         } catch (error) {
             console.error('Error:', error);
-            document.getElementById('answer').innerHTML = '<p>An error occurred. Please try again.</p>';
+            addConversation(userId, question, 'An error occurred. Please try again.');
         }
-    }
-    else {
-        try{
-        const response = await fetch('/upload/nonepdf/', {
-            method: 'POST',
-            body: formData
-        });
-        
+    } else {
+        try {
+            const response = await fetch('/upload/nonepdf/', {
+                method: 'POST',
+                body: formData
+            });
+    
             const data = await response.json();
-            document.getElementById('answer').innerHTML = `<h2>Answer:</h2><p>${data.answer}</p>`;
+            const answer = data.answer;
+            addConversation(userId, question, answer);
         } catch (error) {
             console.error('Error:', error);
-            document.getElementById('answer').innerHTML = '<p>An error occurred. Please try again.</p>';
+            addConversation(userId, question, 'An error occurred. Please try again.');
         }
     }
 });
+
+function addConversation(userId, question, answer) {
+    const conversationDiv = document.getElementById('conversation');
+    const conversationItem = document.createElement('div');
+    conversationItem.innerHTML = `<h3>User ID: ${userId}</h3><p><strong>Question:</strong> ${question}</p><p><strong>Answer:</strong> ${answer}</p>`;
+    conversationDiv.appendChild(conversationItem);
+
+    saveConversation(userId, question, answer);
+}
+
+function saveConversation(userId, question, answer) {
+    let conversation = localStorage.getItem('conversation');
+    conversation = conversation ? JSON.parse(conversation) : [];
+    conversation.push({ userId, question, answer });
+    localStorage.setItem('conversation', JSON.stringify(conversation));
+}
+
+function loadConversation() {
+    const conversationDiv = document.getElementById('conversation');
+    const conversation = localStorage.getItem('conversation');
+    if (conversation) {
+        JSON.parse(conversation).forEach(item => {
+            const conversationItem = document.createElement('div');
+            conversationItem.innerHTML = `<h3>User ID: ${item.userId}</h3><p><strong>Question:</strong> ${item.question}</p><p><strong>Answer:</strong> ${item.answer}</p>`;
+            conversationDiv.appendChild(conversationItem);
+        });
+    }
+}
