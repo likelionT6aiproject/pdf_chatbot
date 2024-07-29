@@ -31,7 +31,7 @@ jobs:
       - name: Run tests
         run: |
           sleep 5
-          curl -f http://localhost:8000/  # 서버 상태 확인용 엔드포인트
+          curl -f http://localhost:8000/ 
 
   auto-merge:
     needs: test
