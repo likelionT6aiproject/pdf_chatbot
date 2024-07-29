@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Start FastAPI server
-        run: uvicorn app:app --host 0.0.0.0 --port 8000 &
+        run: uvicorn main:app --host 0.0.0.0 --port 8000 &
         env:
           PORT: 8000
 
