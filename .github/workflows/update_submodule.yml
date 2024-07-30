@@ -17,6 +17,7 @@ jobs:
           port: ${{secrets.NCP_PORT}}
           script: |
             cd /root/pdf_chatbot
-            docker-compose down
+            ^C
             git pull origin main
-            docker-compose up -d
+            uvicorn main:app --reload
+            
