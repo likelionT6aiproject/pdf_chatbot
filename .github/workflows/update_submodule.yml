@@ -15,12 +15,21 @@ jobs:
 
     - name: Update DNS settings
       run: |
-        echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
-        echo "nameserver 8.8.4.4" | sudo tee -a /etc/resolv.conf > /dev/null
+        echo "nameserver 1.1.1.1" | sudo tee /etc/resolv.conf > /dev/null
+        echo "nameserver 8.8.8.8" | sudo tee -a /etc/resolv.conf > /dev/null
         cat /etc/resolv.conf
 
+    - name: Check DNS resolution
+      run: |
+        host ${{ secrets.NCP_HOST }}
+        nslookup ${{ secrets.NCP_HOST }}
+
     - name: Wait for DNS propagation
-      run: sleep 10
+      run: sleep 30
+
+    - name: Check network connectivity
+      run: |
+        ping -c 4 ${{ secrets.NCP_HOST }}
 
     - name: NCP login and after git pull, docker compose up --build
       uses: appleboy/ssh-action@v1.0.0
@@ -33,8 +42,9 @@ jobs:
         debug: true
         script: |
           cd /root/pdf_chatbot
+          ^C
           git pull origin main
-          docker compose up --build -d
+          uvicorn main:app --reload
 
     - name: Check SSH connection
       if: failure()
