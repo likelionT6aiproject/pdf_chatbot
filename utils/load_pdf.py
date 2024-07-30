@@ -11,4 +11,4 @@ async def load_pdf(pdf_path: str, question: str) -> str:
     docs = faiss_index.similarity_search(question, k=4)
     context = "\n\n".join([doc.page_content for doc in docs])
 
-    return context 
+    return context
