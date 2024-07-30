@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    loadConversation();
+    localStorage.removeItem('conversation');
 });
 
 document.getElementById('uploadForm').addEventListener('submit', async (e) => {
@@ -50,8 +50,6 @@ function addConversation(userId, question, answer) {
     const conversationItem = document.createElement('div');
     conversationItem.innerHTML = `<h3>User ID: ${userId}</h3><p><strong>Question:</strong> ${question}</p><p><strong>Answer:</strong> ${answer}</p>`;
     conversationDiv.appendChild(conversationItem);
-
-    saveConversation(userId, question, answer);
 }
 
 function saveConversation(userId, question, answer) {
