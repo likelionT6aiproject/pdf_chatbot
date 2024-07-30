@@ -11,20 +11,32 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Update DNS settings
       run: |
         echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
         echo "nameserver 8.8.4.4" | sudo tee -a /etc/resolv.conf > /dev/null
+        cat /etc/resolv.conf
+
+    - name: Wait for DNS propagation
+      run: sleep 10
 
     - name: NCP login and after git pull, docker compose up --build
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.NCP_HOST }}
         username: ${{ secrets.NCP_USERNAME }}
         password: ${{ secrets.NCP_PASSWORD }}
         port: ${{ secrets.NCP_PORT }}
+        script_stop: true
+        debug: true
         script: |
           cd /root/pdf_chatbot
           git pull origin main
+          docker compose up --build -d
+
+    - name: Check SSH connection
+      if: failure()
+      run: |
+        nc -zv ${{ secrets.NCP_HOST }} ${{ secrets.NCP_PORT }}
