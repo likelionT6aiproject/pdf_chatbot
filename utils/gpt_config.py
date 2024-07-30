@@ -4,11 +4,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-OPENAI_KEY = os.getenv("OPENAI_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 MODEL = "gpt-3.5-turbo"
 
 client = OpenAI(
-    api_key = OPENAI_KEY
+    api_key = OPENAI_API_KEY
 )
 
 def get_answer(prompt: str):
